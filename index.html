@@ -826,11 +826,40 @@
     <div class="spinner"></div>
 </div>
 <script>
-    window.addEventListener("load", function () {
+    document.addEventListener("DOMContentLoaded", function () {
         const preloader = document.getElementById("preloader");
-        preloader.style.display = "none";
+
+        // Collect all images, including those in carousels, lazy-loaded, etc.
+        const images = document.querySelectorAll('img');
+        let imagesLoadedCount = 0;
+
+        const hidePreloader = () => {
+            preloader.style.display = "none";
+        };
+
+        const checkImagesLoaded = () => {
+            imagesLoadedCount++;
+            if (imagesLoadedCount === images.length) {
+                hidePreloader();
+            }
+        };
+
+        // If no images, hide preloader immediately
+        if (images.length === 0) {
+            hidePreloader();
+        } else {
+            images.forEach(img => {
+                if (img.complete) {
+                    checkImagesLoaded();
+                } else {
+                    img.addEventListener('load', checkImagesLoaded);
+                    img.addEventListener('error', checkImagesLoaded); // Handle broken images
+                }
+            });
+        }
     });
 </script>
+
 
 
 </html>
